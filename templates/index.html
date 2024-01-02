@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>House Price Predictor</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="STFC Logo"> <!-- Replace with your logo path -->
+        <!-- Add other navigation items here if needed -->
+        <h2>House Price Prediction</h2>
+
+    </header>
+
+    <form id="predictionForm">
+        <label for="longitude">Longitude:</label><br>
+        <input type="text" id="longitude" name="longitude"><br>
+
+        <label for="latitude">Latitude:</label><br>
+        <input type="text" id="latitude" name="latitude"><br>
+
+        <label for="housingMedianAge">Housing Median Age:</label><br>
+        <input type="text" id="housingMedianAge" name="housingMedianAge"><br>
+
+        <label for="totalRooms">Total Rooms:</label><br>
+        <input type="text" id="totalRooms" name="totalRooms"><br>
+
+        <label for="totalBedrooms">Total Bedrooms:</label><br>
+        <input type="text" id="totalBedrooms" name="totalBedrooms"><br>
+
+        <label for="population">Population:</label><br>
+        <input type="text" id="population" name="population"><br>
+
+        <label for="households">Households:</label><br>
+        <input type="text" id="households" name="households"><br>
+
+        <label for="medianIncome">Median Income:</label><br>
+        <input type="text" id="medianIncome" name="medianIncome"><br>
+
+        <label>Ocean Proximity:</label><br>
+        <input type="checkbox" id="ocean1H_OCEAN" name="oceanProximity" value="<1H OCEAN"> <1H OCEAN<br>
+        <input type="checkbox" id="oceanINLAND" name="oceanProximity" value="INLAND"> INLAND<br>
+        <input type="checkbox" id="oceanISLAND" name="oceanProximity" value="ISLAND"> ISLAND<br>
+        <input type="checkbox" id="oceanNEAR_BAY" name="oceanProximity" value="NEAR BAY"> NEAR BAY<br>
+        <input type="checkbox" id="oceanNEAR_OCEAN" name="oceanProximity" value="NEAR OCEAN"> NEAR OCEAN<br>
+
+
+        <input type="submit" value="Predict">
+    </form>
+    <p id="predictionResult"></p>
+
+    <script>
+        document.getElementById('predictionForm').onsubmit = function(event) {
+            event.preventDefault();
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/predict", true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function() {
+                if (this.status === 200) {
+                    const response = JSON.parse(this.responseText);
+                    document.getElementById('predictionResult').innerText = "Predicted Median House Value: $" + response.prediction ;
+                }
+            };
+            const data = {
+                longitude: parseFloat(document.getElementById('longitude').value),
+                latitude: parseFloat(document.getElementById('latitude').value),
+                housing_median_age: parseFloat(document.getElementById('housingMedianAge').value),
+                total_rooms: parseFloat(document.getElementById('totalRooms').value),
+                total_bedrooms: parseFloat(document.getElementById('totalBedrooms').value),
+                population: parseFloat(document.getElementById('population').value),
+                households: parseFloat(document.getElementById('households').value),
+                median_income: parseFloat(document.getElementById('medianIncome').value),
+                '1H_OCEAN': getElementChecked('ocean1H_OCEAN'),
+        'INLAND': getElementChecked('oceanINLAND'),
+        'ISLAND': getElementChecked('oceanISLAND'),
+        'NEAR_BAY': getElementChecked('oceanNEAR_BAY'),
+        'NEAR_OCEAN': getElementChecked('oceanNEAR_OCEAN'),
+            };
+            xhr.send(JSON.stringify(data));
+        };
+
+        function getElementChecked(id) {
+    const element = document.getElementById(id);
+    return element ? (element.checked ? 1 : 0) : 0;
+}
+    </script>
+</body>
+</html>
+
+
