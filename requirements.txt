@@ -1,0 +1,6 @@
+Flask
+pandas
+numpy
+scikit-learn
+forex-python
+pickle-mixin
